@@ -45,8 +45,8 @@ class BreadcrumbPlugin(ShopPluginBase):
         render_type = instance.glossary.get('render_type')
         try:
             return select_template([
-                '{}/breadcrumb/{}.html'.format(app_settings.APP_LABEL, render_type),
-                'shop/breadcrumb/{}.html'.format(render_type),
+                f'{app_settings.APP_LABEL}/breadcrumb/{render_type}.html',
+                f'shop/breadcrumb/{render_type}.html',
             ])
         except TemplateDoesNotExist:
             return engines['django'].from_string('<!-- empty breadcrumb -->')

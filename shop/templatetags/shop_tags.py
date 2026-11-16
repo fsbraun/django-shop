@@ -25,7 +25,7 @@ class CartIcon(Node):
 
     def get_template(self):
         return select_template([
-            '{}/templatetags/cart-icon.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/templatetags/cart-icon.html',
             'shop/templatetags/cart-icon.html',
         ]).template
 
@@ -47,7 +47,7 @@ class CartIcon(Node):
 def cart_icon(parser, token):
     def raise_syntax_error():
         choices = '|'.join([item.name for item in CartItems])
-        raise TemplateSyntaxError("Template tag '{}' takes one optional argument: {}".format(bits[0], choices))
+        raise TemplateSyntaxError(f"Template tag '{bits[0]}' takes one optional argument: {choices}")
 
     bits = token.split_contents()
     if len(bits) > 2:

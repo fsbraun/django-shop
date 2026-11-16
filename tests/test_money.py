@@ -14,6 +14,14 @@ from shop.rest.money import MoneyField, JSONRenderer
 EUR = MoneyMaker('EUR')
 
 
+def test_compare_with_unrelated_object():
+    amount = EUR('1.23')
+    other = object()
+    assert amount.__eq__(other) is NotImplemented
+    assert (amount == other) is False
+    assert (other == amount) is False
+
+
 def test_is_abstract():
     with pytest.raises(TypeError):
         AbstractMoney(1)
@@ -118,13 +126,13 @@ def test_format():
 def test_float_format():
     d = Decimal(1.99)
     e = EUR(d)
-    assert '{}'.format(e) == "€ 1.99"
-    assert '{:}'.format(e) == "€ 1.99"
-    assert '{:f}'.format(e) == "€ 1.99"
-    assert '{:.5}'.format(e) == "€ 1.9900"
-    assert '{:.5f}'.format(e) == "€ 1.99000"
-    assert '{:.20}'.format(e) == "€ {:.20}".format(d)
-    assert '{:.20f}'.format(e) == "€ {:.20f}".format(d)
+    assert f'{e}' == "€ 1.99"
+    assert f'{e}' == "€ 1.99"
+    assert f'{e:f}' == "€ 1.99"
+    assert f'{e:.5}' == "€ 1.9900"
+    assert f'{e:.5f}' == "€ 1.99000"
+    assert f'{e:.20}' == f"€ {d:.20}"
+    assert f'{e:.20f}' == f"€ {d:.20f}"
 
 
 def test_add():
@@ -258,7 +266,7 @@ class MoneyTestSerializer(serializers.Serializer):
 
 
 def test_money_serializer():
-    instance = type(str('TestMoney'), (object,), {'amount': EUR('1.23')})
+    instance = type('TestMoney', (object,), {'amount': EUR('1.23')})
     serializer = MoneyTestSerializer(instance)
     assert {'amount': '€ 1.23'} == serializer.data
 

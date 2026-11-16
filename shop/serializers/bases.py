@@ -49,7 +49,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_price(self, product):
         price = product.get_price(self.context['request'])
-        return '{:f}'.format(price)
+        return f'{price:f}'
 
     def render_html(self, product, postfix):
         """
@@ -64,7 +64,7 @@ class ProductSerializer(serializers.ModelSerializer):
             raise exceptions.ImproperlyConfigured(msg)
         app_label = product._meta.app_label.lower()
         request = self.context['request']
-        cache_key = 'product:{0}|{1}-{2}-{3}-{4}-{5}'.format(product.id, app_label, self.label,
+        cache_key = 'product:{}|{}-{}-{}-{}-{}'.format(product.id, app_label, self.label,
             product.product_model, postfix, get_language_from_request(request))
         content = cache.get(cache_key)
         if content:
@@ -76,9 +76,9 @@ class ProductSerializer(serializers.ModelSerializer):
             ('shop', self.label, 'product', postfix),
         ]
         try:
-            template = select_template(['{0}/products/{1}-{2}-{3}.html'.format(*p) for p in params])
+            template = select_template(['{}/products/{}-{}-{}.html'.format(*p) for p in params])
         except TemplateDoesNotExist:
-            return SafeText("<!-- no such template: '{0}/products/{1}-{2}-{3}.html' -->".format(*params[0]))
+            return SafeText("<!-- no such template: '{}/products/{}-{}-{}.html' -->".format(*params[0]))
         # when rendering emails, we require an absolute URI, so that media can be accessed from
         # the mail client
         absolute_base_uri = request.build_absolute_uri('/').rstrip('/')

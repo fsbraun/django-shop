@@ -80,7 +80,7 @@ class ProductListPagination(pagination.LimitOffsetPagination):
 
 
 class ProductListView(generics.ListAPIView):
-    """
+    r"""
     This view is used to list all products which shall be visible below a certain URL.
 
     Usage: Add it to the urlpatterns responsible for rendering the catalog's views. The
@@ -225,7 +225,7 @@ class AddToCartView(views.APIView):
 
 
 class ProductRetrieveView(generics.RetrieveAPIView):
-    """
+    r"""
     This view is used to retrieve and render a certain product.
 
     Usage: Add it to the urlpatterns responsible for rendering the catalog's views. The
@@ -288,7 +288,7 @@ class ProductRetrieveView(generics.RetrieveAPIView):
     def get_template_names(self):
         product = self.get_object()
         app_label = product._meta.app_label.lower()
-        basename = '{}-detail.html'.format(product._meta.model_name)
+        basename = f'{product._meta.model_name}-detail.html'
         return [
             os.path.join(app_label, 'catalog', basename),
             os.path.join(app_label, 'catalog/product-detail.html'),

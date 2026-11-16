@@ -42,7 +42,7 @@ class ProcessBarPlugin(TransparentWrapper, ShopPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         template_names = [
-            '{}/checkout/process-bar.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/checkout/process-bar.html',
             'shop/checkout/process-bar.html',
         ]
         return select_template(template_names)
@@ -51,7 +51,7 @@ class ProcessBarPlugin(TransparentWrapper, ShopPluginBase):
         self.super(ProcessBarPlugin, self).render(context, instance, placeholder)
         num_children = instance.get_num_children()
         if num_children > 0:
-            context['step_css_width'] = '{:3.2f}%'.format(100. / num_children)
+            context['step_css_width'] = f'{100. / num_children:3.2f}%'
         return context
 
     def save_model(self, request, obj, form, change):

@@ -27,7 +27,7 @@ class CheckoutViewSet(GenericViewSet):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.dialog_forms = set([import_string(fc) for fc in app_settings.SHOP_DIALOG_FORMS])
+        self.dialog_forms = {import_string(fc) for fc in app_settings.SHOP_DIALOG_FORMS}
         try:
             from shop.cascade.plugin_base import DialogFormPluginBase
         except ImproperlyConfigured:

@@ -7,7 +7,7 @@ settings.py, otherwise the default Django or another customized implementation w
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser, UserManager as BaseUserManager
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
@@ -45,13 +45,13 @@ class User(AbstractUser):
         return self.email or '<anonymous>'
 
     def get_full_name(self):
-        full_name = super(User, self).get_full_name()
+        full_name = super().get_full_name()
         if full_name:
             return full_name
         return self.get_short_name()
 
     def get_short_name(self):
-        short_name = super(User, self).get_short_name()
+        short_name = super().get_short_name()
         if short_name:
             return short_name
         return self.email
@@ -64,7 +64,7 @@ class User(AbstractUser):
 
         Inactive users can't login anyway, so we don't need a unique constraint for them.
         """
-        super(User, self).validate_unique(exclude)
+        super().validate_unique(exclude)
         if self.email and get_user_model().objects.exclude(id=self.id).filter(is_active=True,
                                                                               email__exact=self.email).exists():
             msg = _("A customer with the e-mail address ‘{email}’ already exists.")

@@ -155,7 +155,7 @@ This is a configuration known to work. Special and optional apps are discussed b
 	    'adminsortable2',
 	    'rest_framework',
 	    'rest_framework.authtoken',
-	    'rest_auth',
+	    'dj_rest_auth',
 	    'django_fsm',
 	    'fsm_admin',
 	    'djng',
@@ -199,13 +199,13 @@ This is a configuration known to work. Special and optional apps are discussed b
   and navigation bars.
 * ``adminsortable2`` allows the site administrator to sort various items in Django's administration
   backend.
-* ``rest_framework``, ``rest_framework.authtoken`` and ``rest_auth``, required, add the REST
+* ``rest_framework``, ``rest_framework.authtoken`` and ``dj_rest_auth``, required, add the REST
   functionality to the **django-SHOP** framework.
 * ``django_fsm`` and ``fsm_admin``, required, add the Finite State Machine to the **django-SHOP**
   framework.
 * ``djng`` only required for installations using AngularJS, which is the recommended JavaScript
-  framework. It adds the interface layer between Django and AngularJS and presumes that
-  django-angular_ is installed.
+  framework. It adds the interface layer between Django and AngularJS and is
+  bundled with django-SHOP; do not install django-angular separately.
 * ``cms``, ``menus`` and ``treebeard`` are required if **django-SHOP** is used in combination with
   **djangoCMS**.
 * ``compressor``, highly recommended. Concatenates and minifies CSS and JavaScript files on

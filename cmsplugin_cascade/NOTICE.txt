@@ -1,0 +1,14 @@
+This directory contains djangocms-cascade 2.3.14, originally maintained by
+Jacob Rief and contributors: https://github.com/jrief/djangocms-cascade
+
+The original MIT license is preserved in LICENSE-MIT. This integration is
+bundled temporarily to retain django CMS 3 and the existing shop plugins on
+Django 5.2. The upstream distribution declares Django <5 and cannot be
+installed alongside Django 5.2 without a dependency conflict. Do not install
+djangocms-cascade separately because it provides the same cmsplugin_cascade
+module.
+
+Local modernization uses pyupgrade --py311-plus and
+django-upgrade --target-version 5.2. Existing plugin identities, app labels,
+templates, and migration names are retained; this does not migrate content to
+django CMS 4 or 5.

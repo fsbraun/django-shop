@@ -51,7 +51,7 @@ class ShopCatalogPlugin(ShopPluginBase):
         if instance.glossary.get('render_template'):
             templates.append(instance.glossary['render_template'])
         templates.extend([
-            '{}/catalog/list.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/catalog/list.html',
             'shop/catalog/list.html',
         ])
         return select_template(templates)
@@ -98,8 +98,8 @@ class ShopAddToCartPlugin(ShopPluginBase):
         else:
             template_prefix = ''
         templates.extend([
-            '{}/catalog/{}product-add2cart.html'.format(app_settings.APP_LABEL, template_prefix),
-            'shop/catalog/{}product-add2cart.html'.format(template_prefix),
+            f'{app_settings.APP_LABEL}/catalog/{template_prefix}product-add2cart.html',
+            f'shop/catalog/{template_prefix}product-add2cart.html',
         ])
         return select_template(templates)
 
@@ -153,7 +153,7 @@ class ShopProductGallery(WithSortableInlineElementsMixin, ShopPluginBase):
         if instance.glossary.get('render_template'):
             templates.append(instance.glossary['render_template'])
         templates.extend([
-            '{}/catalog/product-gallery.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/catalog/product-gallery.html',
             'shop/catalog/product-gallery.html',
         ])
         return select_template(templates)

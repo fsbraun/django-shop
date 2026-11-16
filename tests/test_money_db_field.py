@@ -1,6 +1,7 @@
 import pytest
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+from django.db import connection
 from shop.money.money_maker import MoneyMaker
 from shop.money.fields import MoneyField
 
@@ -29,6 +30,14 @@ def test_to_python():
 def test_get_prep_value():
     f = MoneyField(currency='EUR', null=True)
     assert f.get_prep_value(EUR('3')) == Decimal('3')
+
+
+@pytest.mark.parametrize('prepared', [False, True])
+def test_database_value_uses_plain_decimal(prepared):
+    field = MoneyField(currency='EUR')
+    value = field.get_db_prep_value(EUR('3.14'), connection, prepared=prepared)
+    assert type(value) is Decimal
+    assert value == Decimal('3.14')
 
 
 def test_from_db_value():

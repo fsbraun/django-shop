@@ -179,8 +179,8 @@ class DialogFormPluginBase(ShopPluginBase):
             render_type = 'form'
         try:
             template_names = [
-                '{0}/checkout/{1}'.format(app_settings.APP_LABEL, self.template_leaf_name).format(render_type),
-                'shop/checkout/{}'.format(self.template_leaf_name).format(render_type),
+                f'{app_settings.APP_LABEL}/checkout/{self.template_leaf_name}'.format(render_type),
+                f'shop/checkout/{self.template_leaf_name}'.format(render_type),
             ]
             return select_template(template_names)
         except (AttributeError, TemplateDoesNotExist):

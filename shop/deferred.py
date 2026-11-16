@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import copy
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.base import ModelBase
@@ -14,7 +13,7 @@ class DeferredRelatedField:
         try:
             self.abstract_model = to._meta.object_name
         except AttributeError:
-            assert isinstance(to, str), "%s(%r) is invalid. First parameter must be either a model or a model name" % (self.__class__.__name__, to)
+            assert isinstance(to, str), f"{self.__class__.__name__}({to!r}) is invalid. First parameter must be either a model or a model name"
             self.abstract_model = to
         self.options = dict(**kwargs)
 
@@ -259,4 +258,4 @@ class MaterializedModel(LazyObject):
             repr_attr = self._base_model
         else:
             repr_attr = self._wrapped
-        return '<MaterializedModel: {}>'.format(repr_attr)
+        return f'<MaterializedModel: {repr_attr}>'

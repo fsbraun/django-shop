@@ -9,7 +9,7 @@ class JSONEncoder(encoders.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, AbstractMoney):
-            return '{:f}'.format(obj)
+            return f'{obj:f}'
         return super().default(obj)
 
 
@@ -25,4 +25,4 @@ class MoneyField(serializers.Field):
         super().__init__(*args, **kwargs)
 
     def to_representation(self, obj):
-        return '{:f}'.format(obj)
+        return f'{obj:f}'

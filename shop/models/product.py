@@ -371,7 +371,7 @@ class BaseProduct(PolymorphicModel, metaclass=PolymorphicProductMetaclass):
         """
         shop_app = apps.get_app_config('shop')
         if shop_app.cache_supporting_wildcard:
-            cache.delete_pattern('product:{}|*'.format(self.id))
+            cache.delete_pattern(f'product:{self.id}|*')
 
 ProductModel = deferred.MaterializedModel(BaseProduct)
 

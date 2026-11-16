@@ -4,6 +4,22 @@
 Changelog for django-SHOP
 =========================
 
+Unreleased
+==========
+* Move to Python 3.11 and Django 5.2, using pyupgrade and django-upgrade.
+* Replace django-fsm with django-fsm-2 and its compatible admin integration.
+* Replace django-rest-auth with dj-rest-auth and bundle the modernized AngularJS
+  form integration.
+* Retain django CMS 3.11.11 and bundle the Django 5.2-compatible Cascade
+  integration; defer the CMS 5 migration.
+* Adapt money database parameters, password generation, form rendering, and
+  localization to Django 5.2.
+* Set the project URL to https://github.com/fsbraun/django-shop.
+* Resolve order-number lookups through public QuerySet methods, preserving
+  filtering and exclusion across Django's internal API change.
+* Preserve existing automatic primary key types on Django 3.2.
+
+
 1.2.4
 =====
 * Fix setup.py to proper versionsioning.

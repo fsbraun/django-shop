@@ -26,9 +26,11 @@ class CustomerInlineAdminBase(admin.StackedInline):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    @admin.display(
+        description=pgettext_lazy('customer', "Number")
+    )
     def get_number(self, customer):
         return customer.get_number()
-    get_number.short_description = pgettext_lazy('customer', "Number")
 
 
 class CustomerCreationForm(UserCreationForm):
@@ -96,11 +98,16 @@ class CustomerAdminBase(UserAdmin):
                 fieldsets.pop(2)
         return fieldsets
 
+    @admin.display(
+        description=_("Username"),
+        ordering='email',
+    )
     def get_username(self, user):
         return str(user)
-    get_username.short_description = _("Username")
-    get_username.admin_order_field = 'email'
 
+    @admin.display(
+        description=_("State")
+    )
     def recognized(self, user):
         if user.is_superuser:
             user_state = _("Administrator")
@@ -111,24 +118,27 @@ class CustomerAdminBase(UserAdmin):
         if hasattr(user, 'customer'):
             customer_state = force_str(user.customer.recognized)
             if user.is_staff or user.is_superuser:
-                return '{}/{}'.format(customer_state, user_state)
+                return f'{customer_state}/{user_state}'
             return customer_state
         return user_state
-    recognized.short_description = _("State")
 
+    @admin.display(
+        description=_("Last accessed"),
+        ordering='customer__last_access',
+    )
     def last_access(self, user):
         if hasattr(user, 'customer'):
             return localtime(user.customer.last_access).strftime("%d %B %Y %H:%M:%S")
         return _("No data")
-    last_access.short_description = _("Last accessed")
-    last_access.admin_order_field = 'customer__last_access'
 
+    @admin.display(
+        description=_("Unexpired"),
+        boolean=True,
+    )
     def is_unexpired(self, user):
         if hasattr(user, 'customer'):
             return not user.customer.is_expired
         return True
-    is_unexpired.short_description = _("Unexpired")
-    is_unexpired.boolean = True
 
     def save_related(self, request, form, formsets, change):
         if hasattr(form.instance, 'customer') and (form.instance.is_staff or form.instance.is_superuser):

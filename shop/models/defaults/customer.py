@@ -39,7 +39,7 @@ class Customer(BaseCustomer):
 
     def as_text(self):
         template_names = [
-            '{}/customer.txt'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/customer.txt',
             'shop/customer.txt',
         ]
         template = select_template(template_names)

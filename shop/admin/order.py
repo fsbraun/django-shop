@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 from django.contrib import admin
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models.fields import Field
@@ -56,10 +56,12 @@ class OrderPaymentInline(admin.TabularInline):
         # unless we expect a payment, set all fields as readonly
         return self.get_fields(request, obj)
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Amount Paid")
+    )
     def get_amount(self, obj):
         """Return amount using correct local format"""
         return obj.amount
-    get_amount.short_description = pgettext_lazy('admin', "Amount Paid")
 
 
 class OrderItemInline(admin.StackedInline):
@@ -82,14 +84,16 @@ class OrderItemInline(admin.StackedInline):
     def get_max_num(self, request, obj=None, **kwargs):
         return self.model.objects.filter(order=obj).count()
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Extra data")
+    )
     def render_as_html_extra(self, obj):
         item_extra_template = select_template([
-            '{0}/admin/orderitem-{1}-extra.html'.format(app_settings.APP_LABEL, obj.product.product_model),
-            '{0}/admin/orderitem-product-extra.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/admin/orderitem-{obj.product.product_model}-extra.html',
+            f'{app_settings.APP_LABEL}/admin/orderitem-product-extra.html',
             'shop/admin/orderitem-product-extra.html',
         ])
         return item_extra_template.render(obj.extra)
-    render_as_html_extra.short_description = pgettext_lazy('admin', "Extra data")
 
 
 class StatusListFilter(admin.SimpleListFilter):
@@ -128,30 +132,40 @@ class BaseOrderAdmin(FSMTransitionMixin, admin.ModelAdmin):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.extra_template = select_template([
-            '{}/admin/order-extra.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/admin/order-extra.html',
             'shop/admin/order-extra.html',
         ])
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Order number")
+    )
     def get_number(self, obj):
         return obj.get_number()
-    get_number.short_description = pgettext_lazy('admin', "Order number")
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Total")
+    )
     def get_total(self, obj):
         return str(obj.total)
-    get_total.short_description = pgettext_lazy('admin', "Total")
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Subtotal")
+    )
     def get_subtotal(self, obj):
         return str(obj.subtotal)
-    get_subtotal.short_description = pgettext_lazy('admin', "Subtotal")
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Outstanding amount")
+    )
     def get_outstanding_amount(self, obj):
         return str(obj.outstanding_amount)
-    get_outstanding_amount.short_description = pgettext_lazy('admin', "Outstanding amount")
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Is fully paid"),
+        boolean=True,
+    )
     def is_fully_paid(self, obj):
         return obj.is_fully_paid()
-    is_fully_paid.short_description = pgettext_lazy('admin', "Is fully paid")
-    is_fully_paid.boolean = True
 
     def has_add_permission(self, request):
         return False
@@ -159,17 +173,21 @@ class BaseOrderAdmin(FSMTransitionMixin, admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Extra data")
+    )
     def render_as_html_extra(self, obj):
         return self.extra_template.render(obj.extra)
-    render_as_html_extra.short_description = pgettext_lazy('admin', "Extra data")
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Customer")
+    )
     def get_customer_link(self, obj):
         try:
             url = reverse('admin:shop_customerproxy_change', args=(obj.customer.pk,))
             return format_html('<a href="{0}" target="_new">{1}</a>', url, obj.customer.get_username())
         except NoReverseMatch:
             return format_html('<strong>{0}</strong>', obj.customer.get_username())
-    get_customer_link.short_description = pgettext_lazy('admin', "Customer")
 
     def get_search_fields(self, request):
         search_fields = list(super().get_search_fields(request))
@@ -216,7 +234,7 @@ class PrintInvoiceAdminMixin:
 
     def get_urls(self):
         my_urls = [
-            url(r'^(?P<pk>\d+)/print_invoice/$', self.admin_site.admin_view(self.render_invoice),
+            path('<int:pk>/print_invoice/', self.admin_site.admin_view(self.render_invoice),
                 name='print_invoice'),
         ]
         my_urls.extend(super().get_urls())
@@ -235,12 +253,15 @@ class PrintInvoiceAdminMixin:
 
     def render_invoice(self, request, pk=None):
         template = select_template([
-            '{}/print/invoice.html'.format(app_settings.APP_LABEL.lower()),
+            f'{app_settings.APP_LABEL.lower()}/print/invoice.html',
             'shop/print/invoice.html'
         ])
         content = self._render_content(request, pk, template)
         return HttpResponse(content)
 
+    @admin.display(
+        description=pgettext_lazy('admin', "Print out")
+    )
     def print_out(self, obj):
         if obj.status in ['ready_for_delivery']:
             link = reverse('admin:print_invoice', args=(obj.id,)), pgettext_lazy('admin', "Invoice")
@@ -248,4 +269,3 @@ class PrintInvoiceAdminMixin:
                 '<span class="object-tools"><a href="{0}" class="viewsitelink" target="_new">{1}</a></span>',
                 *link)
         return ''
-    print_out.short_description = pgettext_lazy('admin', "Print out")

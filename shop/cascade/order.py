@@ -38,13 +38,13 @@ class ShopOrderViewsPlugin(LeftRightExtensionMixin, TransparentWrapper, ShopPlug
         if many is True:
             # render Order List View
             return select_template([
-                '{}/order/list.html'.format(app_settings.APP_LABEL),
+                f'{app_settings.APP_LABEL}/order/list.html',
                 'shop/order/list.html',
             ])
         if many is False:
             # render Order Detail View
             return select_template([
-                '{}/order/detail.html'.format(app_settings.APP_LABEL),
+                f'{app_settings.APP_LABEL}/order/detail.html',
                 'shop/order/detail.html',
             ])
         # can happen, if this plugin is abused outside of an OrderView
@@ -74,7 +74,7 @@ class ShopReorderButtonPlugin(OrderButtonBase):
 
     def get_render_template(self, context, instance, placeholder):
         template_names = [
-            '{}/order/reorder-button.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/order/reorder-button.html',
             'shop/order/reorder-button.html',
         ]
         return select_template(template_names)
@@ -87,7 +87,7 @@ class ShopCancelOrderButtonPlugin(OrderButtonBase):
 
     def get_render_template(self, context, instance, placeholder):
         template_names = [
-            '{}/order/cancel-button.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/order/cancel-button.html',
             'shop/order/cancel-button.html',
         ]
         return select_template(template_names)
@@ -120,7 +120,7 @@ class ShopOrderAddendumFormPlugin(OrderButtonBase):
 
     def get_render_template(self, context, instance, placeholder):
         template_names = [
-            '{}/order/addendum-form.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/order/addendum-form.html',
             'shop/order/addendum-form.html',
         ]
         return select_template(template_names)

@@ -292,7 +292,7 @@ class BaseCart(models.Model, metaclass=deferred.ForeignKeyBuilder):
         other_cart.delete()
 
     def __str__(self):
-        return "{}".format(self.pk) if self.pk else "(unsaved)"
+        return f"{self.pk}" if self.pk else "(unsaved)"
 
     @property
     def num_items(self):

@@ -11,19 +11,25 @@ class CustomerInlineAdmin(CustomerInlineAdminBase):
     ]
     readonly_fields = ['get_number', 'get_shipping_addresses', 'get_billing_addresses']
 
+    @admin.display(
+        description=_("Customer Number")
+    )
     def get_number(self, customer):
         return customer.get_number() or '–'
-    get_number.short_description = _("Customer Number")
 
+    @admin.display(
+        description=_("Shipping")
+    )
     def get_shipping_addresses(self, customer):
         addresses = [(a.as_text(),) for a in customer.shippingaddress_set.all()]
         return format_html_join('', '<address>{0}</address>', addresses)
-    get_shipping_addresses.short_description = _("Shipping")
 
+    @admin.display(
+        description=_("Billing")
+    )
     def get_billing_addresses(self, customer):
         addresses = [(a.as_text(),) for a in customer.billingaddress_set.all()]
         return format_html_join('', '<address>{0}</address>', addresses)
-    get_billing_addresses.short_description = _("Billing")
 
 
 @admin.register(CustomerProxy)
@@ -38,9 +44,11 @@ class CustomerAdmin(CustomerAdminBase):
         list_display.insert(1, 'salutation')
         return list_display
 
+    @admin.display(
+        description=_("Salutation"),
+        ordering='customer__salutation',
+    )
     def salutation(self, user):
         if hasattr(user, 'customer'):
             return user.customer.get_salutation_display()
         return ''
-    salutation.short_description = _("Salutation")
-    salutation.admin_order_field = 'customer__salutation'

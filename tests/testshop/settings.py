@@ -3,6 +3,8 @@ from django.utils.text import format_lazy
 
 DEBUG = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 ROOT_URLCONF = 'testshop.urls'
 
 SECRET_KEY = 'test'
@@ -85,7 +87,8 @@ INSTALLED_APPS = [
     'jsonfield',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
+    'dj_rest_auth',
+    'djng',
     'django_fsm',
     'fsm_admin',
     'filer',
@@ -110,7 +113,6 @@ INSTALLED_APPS = [
 
 USE_I18N = False
 
-USE_L10N = True
 
 USE_TZ = True
 
@@ -214,7 +216,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-REST_AUTH_SERIALIZERS = {
+REST_AUTH = {
     'LOGIN_SERIALIZER': 'shop.serializers.auth.LoginSerializer',
 }
 

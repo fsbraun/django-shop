@@ -37,7 +37,7 @@ class CategoryModelMultipleChoiceField(forms.ModelMultipleChoiceField):
     def label_from_instance(self, obj):
         if Site.objects.count() >=2 :
             page_sitename=str(Site.objects.filter(djangocms_nodes=obj.node_id).first().name)
-            return '{} | {}'.format(str(obj), page_sitename)
+            return f'{str(obj)} | {page_sitename}'
         else:
             return str(obj)
 
@@ -136,9 +136,11 @@ class UnitPriceMixin:
         list_display.append('get_unit_price')
         return list_display
 
+    @admin.display(
+        description=_("Unit Price")
+    )
     def get_unit_price(self, obj):
         return str(obj.unit_price)
-    get_unit_price.short_description = _("Unit Price")
 
 
 class CMSPageFilter(admin.SimpleListFilter):

@@ -11,7 +11,7 @@ urlpatterns = []
 for modifier in cart_modifiers_pool.get_payment_modifiers():
     try:
         namespace = modifier.payment_provider.namespace
-        path_ = '{}/'.format(namespace)
+        path_ = f'{namespace}/'
         urls = modifier.payment_provider.get_urls()
         provider_url = path( path_, include((urls, 'url_payment'), namespace=namespace))
         if provider_url.url_patterns != []:

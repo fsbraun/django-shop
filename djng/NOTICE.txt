@@ -1,0 +1,14 @@
+This directory contains django-angular 2.3.1, originally maintained by Jacob
+Rief and contributors: https://github.com/jrief/django-angular
+
+The original MIT license is preserved in LICENSE.txt. The code and frontend
+assets are bundled to preserve django-SHOP's AngularJS integration while moving
+to Python 3.11 and Django 5.2. Do not install django-angular separately: it
+provides the same djng module and its published release uses removed Django APIs.
+
+Local changes: pyupgrade --py311-plus, django-upgrade --target-version 5.2,
+ModelForm.Meta.formfield_callback support, modern error-list rendering, email
+validator domain_allowlist, and replacement of HttpRequest.is_ajax and unquote.
+
+Django 5.2 changes: renderer templates replace _html_output, bound error
+field_id is supported, and label_tag accepts the legend tag argument.
