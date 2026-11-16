@@ -28,7 +28,7 @@ class _ProductDocument(Document):
         queryset_pagination = 499  # let DRF do the pagination
 
     def __str__(self):
-        return "{} {}: {}".format(self.product_type, self.id, self.product_name)
+        return f"{self.product_type} {self.id}: {self.product_name}"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -56,7 +56,7 @@ class _ProductDocument(Document):
             (app_label, 'product'),
             ('shop', 'product'),
         ]
-        template = select_template(['{0}/search/indexes/{1}.txt'.format(*p) for p in params])
+        template = select_template(['{}/search/indexes/{}.txt'.format(*p) for p in params])
         body = template.render({'product': instance})
         return body
 
@@ -90,7 +90,7 @@ class ProductDocument:
             body_analyzers.update(copy) #overrides default language settings
         if language:
             index_name_parts.append(language.lower())
-            doc_name = 'ProductDocument{}'.format(language.title())
+            doc_name = f'ProductDocument{language.title()}'
             analyzer = body_analyzers.get(language, body_analyzers['default'])
         else:
             doc_name = 'ProductDocument'

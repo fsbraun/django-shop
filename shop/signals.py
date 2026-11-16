@@ -6,14 +6,14 @@ from django.conf import settings
 from django.dispatch import Signal
 
 
-customer_recognized = Signal(providing_args=['customer', 'request'])
+customer_recognized = Signal()
 
 if redis and hasattr(settings, 'SESSION_REDIS'):
-    redis_con = dict((key, settings.SESSION_REDIS[key]) for key in ['host', 'port', 'db', 'socket_timeout'])
+    redis_con = {key: settings.SESSION_REDIS[key] for key in ['host', 'port', 'db', 'socket_timeout']}
     pool = redis.ConnectionPool(**redis_con)
     redis_con = redis.Redis(connection_pool=pool)
 else:
-    redis_con = type(str('Redis'), (), {'publish': lambda *args: None})()
+    redis_con = type('Redis', (), {'publish': lambda *args: None})()
 
 
 def email_queued():

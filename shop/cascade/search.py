@@ -48,7 +48,7 @@ class ShopSearchResultsPlugin(ShopPluginBase):
             </div>'''
             return engines['django'].from_string(alert_msg.format(self.name))
         return select_template([
-            '{}/search/results.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/search/results.html',
             'shop/search/results.html',
         ])
 

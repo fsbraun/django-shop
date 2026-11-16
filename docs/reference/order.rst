@@ -500,7 +500,7 @@ the data, the content of the given order is copyied into the cart.
 .. _placeholder: http://django-cms.readthedocs.org/en/latest/introduction/templates_placeholders.html#placeholders
 .. _Finite State Machine: https://gist.github.com/Nagyman/9502133
 .. _graphviz: http://www.graphviz.org/
-.. _FSM docs: https://github.com/kmmbvnr/django-fsm
-.. _FSM admin docs: https://github.com/gadventures/django-fsm-admin
+.. _FSM docs: https://github.com/django-commons/django-fsm-2
+.. _FSM admin docs: https://github.com/coral-li/django-fsm-2-admin
 .. _signal: https://docs.djangoproject.com/en/stable/topics/signals/
 .. _application configuration: https://docs.djangoproject.com/en/1.9/ref/applications/#application-configuration

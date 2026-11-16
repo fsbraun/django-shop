@@ -22,7 +22,7 @@ from shop.models.product import BaseProduct
 
 
 class OrderQuerySet(models.QuerySet):
-    def _filter_or_exclude(self, negate, *args, **kwargs):
+    def _resolve_lookup_kwargs(self, kwargs):
         """
         Emulate filter queries on the Order model using a pseudo slug attribute.
         This allows to use order numbers as slugs, formatted by method `Order.get_number()`.
@@ -39,7 +39,13 @@ class OrderQuerySet(models.QuerySet):
                 lookup_kwargs.update({key + lookup_type: lookup})
             else:
                 lookup_kwargs.update({key: lookup})
-        return super()._filter_or_exclude(negate, *args, **lookup_kwargs)
+        return lookup_kwargs
+
+    def filter(self, *args, **kwargs):
+        return super().filter(*args, **self._resolve_lookup_kwargs(kwargs))
+
+    def exclude(self, *args, **kwargs):
+        return super().exclude(*args, **self._resolve_lookup_kwargs(kwargs))
 
 
 class OrderManager(models.Manager):
@@ -77,7 +83,7 @@ class OrderManager(models.Manager):
             'language': get_language_from_request(request),
             'absolute_base_uri': request.build_absolute_uri('/'),
             'remote_ip': get_client_ip(request)[0],
-            'user_agent': request.META.get('HTTP_USER_AGENT'),
+            'user_agent': request.headers.get('user-agent'),
         }
 
     def get_summary_url(self):
@@ -214,7 +220,7 @@ class BaseOrder(models.Model, metaclass=WorkflowMixinMetaclass):
         return self.get_number()
 
     def __repr__(self):
-        return "<{}(pk={})>".format(self.__class__.__name__, self.pk)
+        return f"<{self.__class__.__name__}(pk={self.pk})>"
 
     def get_or_assign_number(self):
         """

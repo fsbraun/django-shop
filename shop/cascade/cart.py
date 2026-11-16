@@ -54,8 +54,8 @@ class ShopCartPlugin(LeftRightExtensionMixin, TransparentWrapper, ShopPluginBase
         render_type = instance.glossary.get('render_type')
         try:
             return select_template([
-                '{}/cart/{}.html'.format(app_settings.APP_LABEL, render_type),
-                'shop/cart/{}.html'.format(render_type),
+                f'{app_settings.APP_LABEL}/cart/{render_type}.html',
+                f'shop/cart/{render_type}.html',
             ])
         except TemplateDoesNotExist:
             return get_template('shop/cart/editable.html')

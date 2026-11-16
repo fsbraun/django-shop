@@ -4,10 +4,10 @@ from django.urls import NoReverseMatch, reverse
 from django.utils.translation import get_language_from_request
 from cms.models.pagemodel import Page
 from rest_framework.serializers import CharField, BooleanField
-from rest_auth import serializers
+from dj_rest_auth import serializers
 from shop.conf import app_settings
 from shop.forms.auth import PasswordResetRequestForm
-from rest_auth.serializers import LoginSerializer as DefaultLoginSerializer
+from dj_rest_auth.serializers import LoginSerializer as DefaultLoginSerializer
 
 
 class LoginSerializer(DefaultLoginSerializer):
@@ -20,15 +20,15 @@ class PasswordResetRequestSerializer(serializers.PasswordResetSerializer):
 
     def save(self):
         subject_template = select_template([
-            '{}/email/password-reset-subject.txt'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/email/password-reset-subject.txt',
             'shop/email/password-reset-subject.txt',
         ])
         body_text_template = select_template([
-            '{}/email/password-reset-body.txt'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/email/password-reset-body.txt',
             'shop/email/password-reset-body.txt',
         ])
         body_html_template = select_template([
-            '{}/email/password-reset-body.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/email/password-reset-body.html',
             'shop/email/password-reset-body.html',
         ])
         try:

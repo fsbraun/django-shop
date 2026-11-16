@@ -54,15 +54,15 @@ class Order(order.BaseOrder):
             aggr = Order.objects.filter(number__isnull=False, created_at__gt=epoch).aggregate(models.Max('number'))
             try:
                 epoc_number = int(str(aggr['number__max'])[4:]) + 1
-                self.number = int('{0}{1:05d}'.format(epoch.year, epoc_number))
+                self.number = int(f'{epoch.year}{epoc_number:05d}')
             except (KeyError, ValueError):
                 # the first order this year
-                self.number = int('{0}00001'.format(epoch.year))
+                self.number = int(f'{epoch.year}00001')
         return self.get_number()
 
     def get_number(self):
         number = str(self.number)
-        return '{}-{}'.format(number[:4], number[4:])
+        return f'{number[:4]}-{number[4:]}'
 
     @classmethod
     def resolve_number(cls, number):

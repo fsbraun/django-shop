@@ -54,4 +54,4 @@ class ForwardFundPayment(PaymentProvider):
         else:
             order.awaiting_payment()
         order.save(with_notification=True)
-        return 'window.location.href="{}";'.format(order.get_absolute_url())
+        return f'window.location.href="{order.get_absolute_url()}";'

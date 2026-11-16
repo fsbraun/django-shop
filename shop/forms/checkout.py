@@ -27,7 +27,7 @@ class CustomerForm(DialogModelForm):
     def __init__(self, initial=None, instance=None, *args, **kwargs):
         initial = dict(initial) if initial else {}
         assert instance is not None
-        initial.update(dict((f, getattr(instance, f)) for f in self.Meta.custom_fields))
+        initial.update({f: getattr(instance, f) for f in self.Meta.custom_fields})
         super().__init__(initial=initial, instance=instance, *args, **kwargs)
 
     @property
@@ -139,8 +139,8 @@ class AddressForm(DialogModelForm):
             if address_form.is_valid():
                 # prevent adding the same address twice
                 all_field_names = [f.name for f in cls.get_model()._meta.get_fields()]
-                filter_args = dict((attr, val) for attr, val in address_form.data.items()
-                                   if attr in all_field_names and val)
+                filter_args = {attr: val for attr, val in address_form.data.items()
+                                   if attr in all_field_names and val}
                 filter_args.update(customer=request.customer)
                 try:
                     existing_address = cls.get_model().objects.get(**filter_args)
@@ -159,7 +159,7 @@ class AddressForm(DialogModelForm):
                 address_form.populate_siblings_summary()
         elif active_address is None and not data.get('use_primary_address'):
             # customer selected 'Add another address', hence create a new empty form
-            initial = dict((key, val) for key, val in data.items() if key in cls.plugin_fields)
+            initial = {key: val for key, val in data.items() if key in cls.plugin_fields}
             address_form = cls(initial=initial)
             address_form.data.update(address_form.get_initial_data())
             address_form.data.update(active_priority='add')
@@ -355,8 +355,8 @@ class AcceptConditionForm(DialogForm):
 
     def __init__(self, data=None, initial=None, *args, **kwargs):
         plugin_id = data and data.get('plugin_id') or initial and initial.get('plugin_id') or 'none'
-        scope_prefix = '{0}.plugin_{1}'.format(self.scope_prefix, plugin_id)
-        self.form_name = '{0}.plugin_{1}'.format(self.form_name, plugin_id)
+        scope_prefix = f'{self.scope_prefix}.plugin_{plugin_id}'
+        self.form_name = f'{self.form_name}.plugin_{plugin_id}'
         super().__init__(data=data, initial=initial, scope_prefix=scope_prefix, *args, **kwargs)
 
     @classmethod

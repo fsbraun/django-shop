@@ -11,7 +11,7 @@ class AbstractMoney(Decimal):
     MONEY_FORMAT = app_settings.MONEY_FORMAT
 
     def __new__(cls, value):
-        raise TypeError("Can not instantiate {} as AbstractMoney.".format(value))
+        raise TypeError(f"Can not instantiate {value} as AbstractMoney.")
 
     def _get_format_values(self):
         return {
@@ -31,12 +31,12 @@ class AbstractMoney(Decimal):
         try:
             vals.update(amount=Decimal.__str__(Decimal.quantize(self, self._cents)))
         except InvalidOperation:
-            raise ValueError("Can not represent {} as Money type.".format(self.__repr__()))
-        return '{:f}'.format(self)
+            raise ValueError(f"Can not represent {self.__repr__()} as Money type.")
+        return f'{self:f}'
 
     def __repr__(self):
         value = Decimal.__str__(self)
-        return "{}('{}')".format(self.__class__.__name__, value)
+        return f"{self.__class__.__name__}('{value}')"
 
     def __reduce__(self):
         """Required for pickling MoneyInCUR type"""
@@ -51,16 +51,13 @@ class AbstractMoney(Decimal):
         else:
             amount = Decimal.__format__(self, specifier)
 
-        if settings.USE_L10N:
-            lang, use_l10n = get_language(), True
-        else:
-            lang, use_l10n = None, False
+        lang = get_language()
 
         # handle grouping
-        use_grouping = settings.USE_L10N and settings.USE_THOUSAND_SEPARATOR
-        decimal_sep = get_format('DECIMAL_SEPARATOR', lang, use_l10n=use_l10n)
-        grouping = get_format('NUMBER_GROUPING', lang, use_l10n=use_l10n)
-        thousand_sep = get_format('THOUSAND_SEPARATOR', lang, use_l10n=use_l10n)
+        use_grouping = settings.USE_THOUSAND_SEPARATOR
+        decimal_sep = get_format('DECIMAL_SEPARATOR', lang)
+        grouping = get_format('NUMBER_GROUPING', lang)
+        thousand_sep = get_format('THOUSAND_SEPARATOR', lang)
 
         # minus sign for negative amounts
         if amount[0] == '-':
@@ -149,6 +146,8 @@ class AbstractMoney(Decimal):
         return float(s)
 
     def __eq__(self, other, context=None):
+        if other is not None and not isinstance(other, (Decimal, int, float)):
+            return NotImplemented
         other = self._assert_addable(other)
         return Decimal.__eq__(self.as_decimal(), other.as_decimal())
 
@@ -264,7 +263,7 @@ class MoneyMaker(type):
         else:
             currency_code = currency_code.upper()
         if currency_code not in CURRENCIES:
-            raise TypeError("'{}' is an unknown currency code. Please check shop/money/iso4217.py".format(currency_code))
+            raise TypeError(f"'{currency_code}' is an unknown currency code. Please check shop/money/iso4217.py")
         name = str('MoneyIn' + currency_code)
         bases = (AbstractMoney,)
         try:

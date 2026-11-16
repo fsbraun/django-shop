@@ -22,7 +22,7 @@ def test_catalog_list(commodity_factory, rf):
 @pytest.mark.django_db
 def test_catalog_detail(commodity_factory, customer_factory, rf):
     product = commodity_factory()
-    request = rf.get('/catalog/{}'.format(product.slug))
+    request = rf.get(f'/catalog/{product.slug}')
     request.current_page = product.cms_pages.first()
     request.customer = customer_factory()
     response = ProductRetrieveView.as_view()(request, slug=product.slug)

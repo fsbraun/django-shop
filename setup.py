@@ -2,26 +2,27 @@
 from setuptools import setup, find_packages
 import shop
 
-with open('README.md', 'r') as fh:
+with open('README.md') as fh:
     long_description = fh.read()
 
 REQUIREMENTS = [
-    'Django>=2.1,<3.1',
-    'django-filer>=1.7',
+    'Django>=5.2,<5.3',
+    'django-filer>=3.6,<4',
     'django-ipware',
-    'django-fsm>=2.7',
-    'django-fsm-admin',
-    'djangorestframework>=3.9,<4',
-    'django-rest-auth',
-    'django-angular',
-    'Django-Select2',
-    'django-rest-auth',
+    'django-fsm-2>=4.3,<5',
+    'django-fsm-2-admin>=2.0.1,<3',
+    'djangorestframework>=3.16,<4',
+    'dj-rest-auth>=4,<5',
+    'Django-Select2>=7.11',
     'django-admin-sortable2',
     'django-formtools',
-    'django_polymorphic',
-    'django-post_office',
-    'django-cms>=3.7',
-    'djangocms-cascade>=1.3,<2',
+    'django-polymorphic>=4,<5',
+    'django-post-office>=3.11',
+    'django-cms>=3.11.11,<4',
+    'django-treebeard>=4.8,<5',
+    'django-entangled>=0.5.4',
+    'djangocms-text-ckeditor>=5.1.7,<6',
+    'requests',
 ]
 
 CLASSIFIERS = [
@@ -31,13 +32,9 @@ CLASSIFIERS = [
     'License :: OSI Approved :: BSD License',
     'Operating System :: OS Independent',
     'Programming Language :: Python',
-    'Programming Language :: Python :: 3.6',
-    'Programming Language :: Python :: 3.7',
-    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.11',
     'Framework :: Django',
-    'Framework :: Django :: 2.1',
-    'Framework :: Django :: 2.2',
-    'Framework :: Django :: 3.0',
+    'Framework :: Django :: 5.2',
     'Topic :: Software Development :: Libraries :: Application Frameworks',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
 ]
@@ -50,7 +47,7 @@ setup(
     description="A RESTful e-commerce framework based on Django",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='http://www.django-shop.org/',
+    url='https://github.com/fsbraun/django-shop',
     license='BSD License',
     platforms=['OS Independent'],
     classifiers=CLASSIFIERS,
@@ -58,4 +55,5 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=REQUIREMENTS,
+    python_requires='>=3.11',
 )

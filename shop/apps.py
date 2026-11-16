@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 class ShopConfig(AppConfig):
     name = 'shop'
+    default_auto_field = 'django.db.models.AutoField'
     verbose_name = _("Shop")
     cache_supporting_wildcard = False
 

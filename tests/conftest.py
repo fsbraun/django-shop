@@ -47,7 +47,7 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def create(cls, **kwargs):
-        user = super(UserFactory, cls).create(**kwargs)
+        user = super().create(**kwargs)
         assert isinstance(user, get_user_model())
         if DJANGO_VERSION < (2,):
             assert user.is_authenticated() is True
@@ -55,7 +55,7 @@ class UserFactory(factory.django.DjangoModelFactory):
             assert user.is_authenticated is True
         return user
 
-    username = factory.Sequence(lambda n: 'uid-{}'.format(n))
+    username = factory.Sequence(lambda n: f'uid-{n}')
     password = 'secret'
 
 
@@ -66,7 +66,7 @@ class CustomerFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def create(cls, **kwargs):
-        customer = super(CustomerFactory, cls).create(**kwargs)
+        customer = super().create(**kwargs)
         assert isinstance(customer, Customer)
         assert isinstance(customer.user, get_user_model())
         assert customer.is_authenticated is True
@@ -107,7 +107,7 @@ class CommodityFactory(factory.django.DjangoModelFactory):
         model = Commodity
 
     product_name = factory.fuzzy.FuzzyText(prefix='Product-')
-    product_code = factory.Sequence(lambda n: 'article-{}'.format(n + 1))
+    product_code = factory.Sequence(lambda n: f'article-{n + 1}')
     unit_price = Money(factory.fuzzy.FuzzyDecimal(1, 100).fuzz())
     slug = factory.fuzzy.FuzzyText(length=7)
     order = factory.Sequence(lambda n: n)
@@ -115,7 +115,7 @@ class CommodityFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def create(cls, **kwargs):
-        product = super(CommodityFactory, cls).create(**kwargs)
+        product = super().create(**kwargs)
         page = create_page("Catalog", 'page.html', 'en')
         ProductPageModel.objects.create(page=page, product=product)
         return product

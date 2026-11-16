@@ -1,3 +1,4 @@
+import json
 from urllib.parse import urlparse
 
 from django.contrib.auth.models import AnonymousUser
@@ -11,6 +12,7 @@ from shop.models.notification import Notification
 from shop.serializers.delivery import DeliverySerializer
 from shop.serializers.order import OrderDetailSerializer
 from shop.signals import email_queued
+from shop.rest.money import JSONEncoder
 
 
 class EmulateHttpRequest(HttpRequest):
@@ -74,6 +76,8 @@ def transition_change_notification(order):
         attachments = {}
         for notiatt in notification.notificationattachment_set.all():
             attachments[notiatt.attachment.original_filename] = notiatt.attachment.file.file
+        # post_office stores the deferred rendering context in a native JSONField.
+        context = json.loads(json.dumps(context, cls=JSONEncoder))
         mail.send(recipient, template=template, context=context,
                   attachments=attachments, render_on_delivery=True)
         emails_in_queue = True

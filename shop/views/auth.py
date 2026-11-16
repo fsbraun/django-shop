@@ -3,6 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.utils.encoding import force_str
+from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import status
@@ -13,7 +14,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
 from rest_framework.settings import api_settings
-from rest_auth.views import LoginView as OriginalLoginView, PasswordChangeView as OriginalPasswordChangeView
+from dj_rest_auth.views import LoginView as OriginalLoginView, PasswordChangeView as OriginalPasswordChangeView
 
 from shop.models.cart import CartModel
 from shop.models.customer import CustomerModel
@@ -172,7 +173,7 @@ class PasswordResetConfirmView(GenericAPIView):
     def get(self, request, uidb64=None, token=None):
         data = {'uid': uidb64, 'token': token}
         serializer_class = self.get_serializer_class()
-        password = get_user_model().objects.make_random_password()
+        password = get_random_string(10)
         data.update(new_password1=password, new_password2=password)
         serializer = serializer_class(data=data, context=self.get_serializer_context())
         if not serializer.is_valid():

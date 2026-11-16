@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.forms import widgets, ModelForm
 from django.template.loader import get_template, select_template, render_to_string
 from django.utils.html import format_html
+from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 from djng.forms import fields, NgModelFormMixin, NgFormValidationMixin
 from djng.styling.bootstrap3.forms import Bootstrap3ModelForm
@@ -60,7 +61,7 @@ class RegisterUserForm(NgModelFormMixin, NgFormValidationMixin, UniqueEmailValid
     def __init__(self, data=None, instance=None, *args, **kwargs):
         if data and data.get('preset_password', False):
             pwd_length = max(self.base_fields['password1'].min_length or 8, 8)
-            password = get_user_model().objects.make_random_password(pwd_length)
+            password = get_random_string(pwd_length)
             data['password1'] = data['password2'] = password
         super().__init__(data=data, instance=instance, *args, **kwargs)
 
@@ -100,17 +101,17 @@ class RegisterUserForm(NgModelFormMixin, NgFormValidationMixin, UniqueEmailValid
             'user': user,
         }
         subject_template = select_template([
-            '{}/email/register-user-subject.txt'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/email/register-user-subject.txt',
             'shop/email/register-user-subject.txt',
         ])
         # Email subject *must not* contain newlines
         subject = ''.join(subject_template.render(context).splitlines())
         body_text_template = select_template([
-            '{}/email/register-user-body.txt'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/email/register-user-body.txt',
             'shop/email/register-user-body.txt',
         ])
         body_html_template = select_template([
-            '{}/email/register-user-body.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/email/register-user-body.html',
             'shop/email/register-user-body.html',
         ], using='post_office')
         message = body_text_template.render(context)
@@ -136,7 +137,7 @@ class ContinueAsGuestForm(ModelForm):
         self.instance.user.is_active = app_settings.GUEST_IS_ACTIVE_USER
         if self.instance.user.is_active:
             # set a usable password, otherwise the user later can not reset its password
-            password = get_user_model().objects.make_random_password(length=30)
+            password = get_random_string(30)
             self.instance.user.set_password(password)
         return super().save(commit)
 

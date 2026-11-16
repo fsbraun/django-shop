@@ -27,10 +27,10 @@ class CommodityWizardForm(BaseFormMixin, models.ModelForm):
         media.add_css(css)
         media._js = [
             'admin/js/core.js',
-            'admin/js/vendor/jquery/jquery{}.js'.format(minimized),
+            f'admin/js/vendor/jquery/jquery{minimized}.js',
             'admin/js/jquery.init.js',
             'admin/js/urlify.js',
-            'admin/js/prepopulate{}.js'.format(minimized),
+            f'admin/js/prepopulate{minimized}.js',
         ] + media._js
         media.add_js([
             'filer/js/libs/mediator.min.js',

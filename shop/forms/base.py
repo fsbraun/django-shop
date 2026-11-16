@@ -20,7 +20,7 @@ class DialogFormMixin(NgModelFormMixin, NgFormValidationMixin):
     def __init__(self, *args, **kwargs):
         kwargs.pop('cart', None)  # cart object must be removed, otherwise underlying methods complain
         auto_name = self.form_name  ## .replace('_form', '')
-        kwargs.setdefault('auto_id', '{}-%s'.format(auto_name))
+        kwargs.setdefault('auto_id', f'{auto_name}-%s')
         super().__init__(*args, **kwargs)
 
     @classproperty
@@ -106,7 +106,7 @@ class DialogModelForm(DialogFormMixin, Bootstrap3ModelForm):
         for name, field in self.fields.items():
             if not field.widget.is_hidden:
                 css_classes[name] = [css_classes['*']]
-                css_classes[name].append('{}-{}'.format(self.scope_prefix, name))
+                css_classes[name].append(f'{self.scope_prefix}-{name}')
         return css_classes
 
 

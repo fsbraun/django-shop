@@ -11,7 +11,7 @@ from types import new_class
 
 def create_regular_class(name, fields={}, meta={}):
     meta.setdefault('app_label', 'foo')
-    Meta = type(str('Meta'), (), meta)
+    Meta = type('Meta', (), meta)
     return type(str(name), (models.Model,), dict(Meta=Meta, __module__=__name__, **fields))
 
 
@@ -25,14 +25,14 @@ def create_deferred_base_class(name, fields={}, meta={}, polymorphic=False):
 
     meta.setdefault('app_label', 'foo')
     meta.setdefault('abstract', True)
-    Meta = type(str('Meta'), (), meta)
+    Meta = type('Meta', (), meta)
     cls_dict = dict(Meta=Meta, __metaclass__=metaclass, __module__=__name__, **fields)
     return new_class(name, (model_class,), {'metaclass': metaclass}, lambda attrs: attrs.update(cls_dict))
 
 
 def create_deferred_class(name, base, fields={}, meta={}, mixins=()):
     meta.setdefault('app_label', 'bar')
-    Meta = type(str('Meta'), (), meta)
+    Meta = type('Meta', (), meta)
     return type(str(name), mixins + (base,), dict(Meta=Meta, __module__=__name__, **fields))
 
 
@@ -303,7 +303,7 @@ class DeferredTestCase(TestCase):
         self._test_foreign_key(DeferredPolymorphicProduct, DeferredCustomer, 'owner')
 
     def test_mixins_allowed(self):
-        SomeMixin = type(str('SomeMixin'), (object,), {})
+        SomeMixin = type('SomeMixin', (object,), {})
         BaseModel = create_regular_class('BaseModel', meta={'abstract': True})
         MixinBaseProduct = create_deferred_base_class('MixinBaseProduct')
         MixinProduct = create_deferred_class('MixinProduct', MixinBaseProduct, mixins=(SomeMixin, BaseModel))

@@ -11,7 +11,7 @@ postgresql_engine_names = [
 ]
 
 if settings.DATABASES['default']['ENGINE'] in postgresql_engine_names:
-    from django.contrib.postgres.fields import JSONField as _JSONField
+    from django.db.models import JSONField as _JSONField
 else:
     from jsonfield.fields import JSONField as _JSONField
 
@@ -44,7 +44,7 @@ class ChoiceEnumMeta(enum.EnumMeta):
                 try:
                     val, labels[key] = source_value
                 except ValueError:
-                    raise ValueError("Invalid ChoiceEnum member '{}'".format(key))
+                    raise ValueError(f"Invalid ChoiceEnum member '{key}'")
             else:
                 val = source_value
                 labels[key] = key.replace("_", " ").title()
@@ -128,5 +128,5 @@ class ChoiceEnumField(models.PositiveSmallIntegerField):
     def value_to_string(self, obj):
         value = getattr(obj, self.name, obj)
         if not isinstance(value, self.enum_type):
-            raise ValueError("Value must be of type {}".format(self.enum_type))
+            raise ValueError(f"Value must be of type {self.enum_type}")
         return value.name

@@ -20,82 +20,60 @@ Running tests
 
 It's important to run tests before committing :)
 
-
-Setting up the environment
+Python 3.11 and Django 5.2
 --------------------------
 
-We highly suggest you run the tests suite in a clean environment, using a tool such as
-`virtualenv <http://pypi.python.org/pypi/virtualenv>`_.
+The GitHub Actions workflow uses pyenv to install Python 3.11.15 and runs the
+suite on Django 5.2.19 with django CMS 3.11.11. It uploads JUnit test results and
+installed dependency versions. The Django 2.2 and 3.0 baselines passed before
+moving forward; they are no longer supported by the current source tree.
+Django 4.2 also passed before this step; the current target is Django 5.2,
+while django CMS remains on version 3.11.
 
-1. Clone the repository and cd into it:
+To reproduce the CI environment::
 
-.. code-block:: shell
+    pyenv install --skip-existing 3.11.15
+    PYENV_VERSION=3.11.15 pyenv exec python -m venv /tmp/django-shop-dev
+    . /tmp/django-shop-dev/bin/activate
+    python -m pip install pip==24.3.1 setuptools==69.5.1 wheel==0.45.1
+    python -m pip install -r tests/django52-requirements.txt
+    python -m pip install --no-deps --no-build-isolation -e .
+    python -m pip check
+    cd tests
+    DJANGO_DEBUG=1 python manage.py makemigrations testshop --noinput
+    DJANGO_DEBUG=1 python -m pytest
 
-	git clone https://github.com/awesto/django-shop
-	cd django-shop
+Alternatively, run ``tox -e py311-django52`` with Python 3.11 available.
 
-2. Create a virtualenv, and activate it:
+The source is modernized with ``pyupgrade --py311-plus`` and
+``django-upgrade --target-version 5.2``. Run these tools on changed Python files.
 
-.. code-block:: shell
+Upgrade notes
+~~~~~~~~~~~~~
 
-	virtualenv ~/.virtualenvs/django-shop
-	source ~/.virtualenvs/django-shop/bin/activate
-
-3. Install the project in development mode:
-
-.. code-block:: shell
-
-	pip install -e .
-
-4. Install the development requirements:
-
-.. code-block:: shell
-
-	pip install -r tests/requirements.txt
-
-That's it! Now, you should be able to run the tests::
-
-	export DJANGO_SHOP_TUTORIAL=polymorphic
-	py.test tests
-
-We use `tox <http://codespeak.net/tox/>`_ as a CI tool. To run the full CI test suite and get a
-coverage report, all you have to do is this:
-
-.. code-block:: shell
-
-	pip install tox
-	tox
-
-If you work on a certain part of the code base and you want to run the related tests, you may only
-want to run the tests affecting that part. In such a case use ``py.test`` from your testing
-environment and specify the file to test, or for more granularity the class name or even the method
-name. Here are two examples:
-
-.. code-block:: shell
-
-	py.test tests/test_money.py
-	py.test tests/test_money.py -k test_pickle
-
-Measuring which lines of code have been "seen" be the test runner is an important task while
-testing. Do this by creating a coverage report, for example with:
-
-.. code-block:: shell
-
-	pip install coverage
-	coverage run $(which py.test) tests
-	coverage report
-
-or if you to test only a specific class (assuming you have already ran tox once):
-
-.. code-block:: shell
-
-	coverage run .tox/py27-django19/bin/py.test tests/test_money.py
-	coverage report -m shop/money/*.py
-
-.. note::
-
-	Using tox and py.test is optional. If you prefer the conventional way of running tests, you can
-	do this: ``django-admin.py test tests --settings shop.testsettings``.
+* Replace ``django-fsm`` and ``django-fsm-admin`` with ``django-fsm-2`` and
+  ``django-fsm-2-admin``. The ``django_fsm`` and ``fsm_admin`` import paths and
+  installed app labels remain the same. Remove the old distributions before
+  installing the replacements because they provide the same Python modules.
+* Replace ``django-rest-auth`` with ``dj-rest-auth``, change the installed app
+  from ``rest_auth`` to ``dj_rest_auth``, and move the login serializer setting
+  from ``REST_AUTH_SERIALIZERS`` into ``REST_AUTH``.
+* The ``djng`` module and its assets are now bundled with django-SHOP to support
+  Django 5.2. Uninstall the separately installed ``django-angular`` distribution
+  before upgrading django-SHOP.
+  Its original MIT license and the changes are recorded in ``djng/NOTICE.txt``.
+* Cascade 2.3.14 is now bundled because its upstream dependency constraint
+  excludes Django 5.2. Uninstall the separately installed ``djangocms-cascade``
+  distribution before upgrading django-SHOP to avoid overlapping modules.
+  Its MIT license and changes are
+  recorded in ``cmsplugin_cascade/NOTICE.txt``. Existing content is not migrated
+  to CMS 4 or 5 by this upgrade.
+  Treebeard remains on its 4.x API for compatibility with CMS 3's plugin trees.
+* Apply the dependency migrations and the ``email_auth`` migration that expands
+  ``first_name`` to 150 characters. Register the user model in the admin for
+  Filer's user autocomplete fields.
+* Keep ``DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'`` in merchant settings
+  to preserve existing primary key types for materialized shop models.
 
 
 Community

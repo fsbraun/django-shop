@@ -76,7 +76,7 @@ class BaseDelivery(models.Model, metaclass=deferred.ForeignKeyBuilder):
         if self.order.allow_partial_delivery:
             for part, delivery in enumerate(self.order.delivery_set.all(), 1):
                 if delivery.pk == self.pk:
-                    return "{} / {}".format(self.order.get_number(), part)
+                    return f"{self.order.get_number()} / {part}"
         return self.order.get_number()
 
 DeliveryModel = deferred.MaterializedModel(BaseDelivery)

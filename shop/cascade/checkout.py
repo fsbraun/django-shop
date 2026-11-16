@@ -71,8 +71,8 @@ class ShopProceedButton(BootstrapButtonMixin, LinkPluginBase):
         else:
             button_template = 'proceed-button'
         template_names = [
-            '{}/checkout/{}.html'.format(app_settings.APP_LABEL, button_template),
-            'shop/checkout/{}.html'.format(button_template),
+            f'{app_settings.APP_LABEL}/checkout/{button_template}.html',
+            f'shop/checkout/{button_template}.html',
         ]
         return select_template(template_names)
 
@@ -225,8 +225,8 @@ class CheckoutAddressPlugin(DialogFormPluginBase):
         if render_type not in ['form', 'summary']:  # validate
             render_type = 'form'
         template_names = [
-            '{0}/checkout/{1}-address-{2}.html'.format(app_settings.APP_LABEL, addr_form, render_type),
-            'shop/checkout/{0}-address-{1}.html'.format(addr_form, render_type),
+            f'{app_settings.APP_LABEL}/checkout/{addr_form}-address-{render_type}.html',
+            f'shop/checkout/{addr_form}-address-{render_type}.html',
         ]
         return select_template(template_names)
 
@@ -333,7 +333,7 @@ class AcceptConditionMixin:
         bound_form = FormClass(**form_data)
         context[bound_form.form_name] = bound_form
         super().render(context, instance, placeholder)
-        accept_condition_form = context['accept_condition_form.plugin_{}'.format(instance.pk)]
+        accept_condition_form = context[f'accept_condition_form.plugin_{instance.pk}']
         # transfer the stored HTML content into the widget's label
         accept_condition_form['accept'].field.label = mark_safe(context['body'])
         accept_condition_form['accept'].field.widget.choice_label = accept_condition_form['accept'].field.label  # Django < 1.11
@@ -347,7 +347,7 @@ class AcceptConditionPlugin(AcceptConditionMixin, TextPlugin):
 
     def get_admin_url_name(self, name):
         model_name = 'acceptcondition'
-        url_name = "%s_%s_%s" % ('shop', model_name, name)
+        url_name = "{}_{}_{}".format('shop', model_name, name)
         return url_name
 
 
@@ -369,8 +369,8 @@ class RequiredFormFieldsPlugin(ShopPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         template_names = [
-            '{0}/checkout/{1}'.format(app_settings.APP_LABEL, self.template_leaf_name),
-            'shop/checkout/{}'.format(self.template_leaf_name),
+            f'{app_settings.APP_LABEL}/checkout/{self.template_leaf_name}',
+            f'shop/checkout/{self.template_leaf_name}',
         ]
         return select_template(template_names)
 
@@ -388,7 +388,7 @@ class ValidateSetOfFormsPlugin(TransparentContainer, ShopPluginBase):
 
     def get_render_template(self, context, instance, placeholder):
         return select_template([
-            '{}/checkout/forms-set.html'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/checkout/forms-set.html',
             'shop/checkout/forms-set.html',
         ])
 

@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.urls import include, path, re_path
 from django.http import JsonResponse
 from rest_framework import routers
 
@@ -21,17 +21,17 @@ def fetch_messages(request):
 
 
 urlpatterns = [
-    url(r'^select_product/?$',
+    re_path(r'^select_product/?$',
         ProductSelectView.as_view(),
         name='select-product'),
-    url(r'^fetch_messages/?$',
+    re_path(r'^fetch_messages/?$',
         fetch_messages,
         name='fetch-messages'),
-    url(r'^shipping_address/(?P<priority>({{\s*\w+\s*}}|\d+|add))$',
+    re_path(r'^shipping_address/(?P<priority>({{\s*\w+\s*}}|\d+|add))$',
         AddressEditView.as_view(form_class=ShippingAddressForm),
         name='edit-shipping-address'),
-    url(r'^billing_address/(?P<priority>({{\s*\w+\s*}}|\d+|add))$',
+    re_path(r'^billing_address/(?P<priority>({{\s*\w+\s*}}|\d+|add))$',
         AddressEditView.as_view(form_class=BillingAddressForm),
         name='edit-billing-address'),
-    url(r'^', include(router.urls)),
+    path('', include(router.urls)),
 ]

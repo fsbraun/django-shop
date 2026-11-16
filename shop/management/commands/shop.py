@@ -81,13 +81,13 @@ Usage:
             self.personal_pages = self.impersonal_pages = None
             if self.add_recommended:
                 for k, msg in enumerate(self.create_recommended_pages(), 1):
-                    self.stdout.write(" {}. {}".format(k, msg))
+                    self.stdout.write(f" {k}. {msg}")
             for k, msg in enumerate(self.check_mandatory_pages(), 1):
-                self.stdout.write(" {}. {}".format(k, msg))
+                self.stdout.write(f" {k}. {msg}")
         elif subcommand == 'review-settings':
             self.stdout.write("The following configuration settings must be fixed:")
             for k, msg in enumerate(self.review_settings(), 1):
-                self.stdout.write(" {}. {}".format(k, msg))
+                self.stdout.write(f" {k}. {msg}")
         else:
             msg = "Unknown sub-command for shop. Use one of: customer check-pages review-settings"
             self.stderr.write(msg.format(subcommand))
@@ -302,9 +302,9 @@ Usage:
                         if breadcrumb_glossary:
                             self.create_breadcrumb(page, breadcrumb_glossary)
                         self.publish_in_all_languages(page)
-                        yield "Created mandatory CMS page titled '{0}'.".format(page.get_title(default_language))
+                        yield f"Created mandatory CMS page titled '{page.get_title(default_language)}'."
                     else:
-                        yield "Mandatory CMS page '{0}' exists already.".format(page.get_title(default_language))
+                        yield f"Mandatory CMS page '{page.get_title(default_language)}' exists already."
                 else:
                     yield str(exc)
             except CommandError as exc:
@@ -521,8 +521,8 @@ Usage:
         if 'django_filters.rest_framework.DjangoFilterBackend' not in REST_FRAMEWORK.get('DEFAULT_FILTER_BACKENDS', []):
             yield "settings.REST_FRAMEWORK['DEFAULT_FILTER_BACKENDS'] should contain class 'django_filters.rest_framework.DjangoFilterBackend'."
 
-        if getattr(settings, 'REST_AUTH_SERIALIZERS', {}).get('LOGIN_SERIALIZER') != 'shop.serializers.auth.LoginSerializer':
-            yield "settings.REST_AUTH_SERIALIZERS['LOGIN_SERIALIZER'] should be set to 'shop.serializers.auth.LoginSerializer'."
+        if getattr(settings, 'REST_AUTH', {}).get('LOGIN_SERIALIZER') != 'shop.serializers.auth.LoginSerializer':
+            yield "settings.REST_AUTH['LOGIN_SERIALIZER'] should be set to 'shop.serializers.auth.LoginSerializer'."
 
         if 'shop.cascade' not in getattr(settings, 'CMSPLUGIN_CASCADE_PLUGINS', []):
             yield "settings.CMSPLUGIN_CASCADE_PLUGINS should contain entry 'shop.cascade'."

@@ -7,7 +7,7 @@ class CatalogListCMSApp(CMSApp):
     name = _("Catalog List")
 
     def get_urls(self, page=None, language=None, **kwargs):
-        raise NotImplementedError("{} must implement method `.get_urls()`.".format(self.__class__))
+        raise NotImplementedError(f"{self.__class__} must implement method `.get_urls()`.")
 
 
 class CatalogSearchApp(CMSApp):
@@ -20,13 +20,13 @@ class CatalogSearchApp(CMSApp):
     name = _("Catalog Search")
 
     def get_urls(self, page=None, language=None, **kwargs):
-        from django.conf.urls import url
+        from django.urls import re_path
         from shop.search.mixins import CatalogSearchViewMixin
         from shop.views.catalog import ProductListView
 
         SearchView = type('SearchView', (CatalogSearchViewMixin, ProductListView), {})
         return [
-            url(r'^', SearchView.as_view(
+            re_path(r'^', SearchView.as_view(
                 filter_backends=[],
                 search_fields=['product_name', 'product_code', 'body']
             )),
@@ -38,13 +38,13 @@ class OrderApp(CMSApp):
     cache_placeholders = False
 
     def get_urls(self, page=None, language=None, **kwargs):
-        from django.conf.urls import url
+        from django.urls import re_path
         from shop.views.order import OrderView
 
         return [
-            url(r'^(?P<slug>[\w-]+)/(?P<secret>[\w-]+)', OrderView.as_view(many=False)),  # publicly accessible
-            url(r'^(?P<slug>[\w-]+)', OrderView.as_view(many=False)),  # requires authentication
-            url(r'^', OrderView.as_view()),  # requires authentication
+            re_path(r'^(?P<slug>[\w-]+)/(?P<secret>[\w-]+)', OrderView.as_view(many=False)),  # publicly accessible
+            re_path(r'^(?P<slug>[\w-]+)', OrderView.as_view(many=False)),  # requires authentication
+            re_path(r'^', OrderView.as_view()),  # requires authentication
         ]
 
 
@@ -52,11 +52,11 @@ class PasswordResetApp(CMSApp):
     name = _("Password Reset Confirm")
 
     def get_urls(self, page=None, language=None, **kwargs):
-        from django.conf.urls import url
+        from django.urls import re_path
         from shop.views.auth import PasswordResetConfirmView
 
         return [
-            url(r'^(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})',
+            re_path(r'^(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})',
                 PasswordResetConfirmView.as_view(),
             )
         ]

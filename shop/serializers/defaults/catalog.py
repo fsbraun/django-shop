@@ -6,7 +6,7 @@ from shop.serializers.bases import AvailabilitySerializer
 
 
 class AddToCartSerializer(serializers.Serializer):
-    """
+    r"""
     By default, this serializer is used by the view class :class:`shop.views.catalog.AddToCartView`,
     which handles the communication from the "Add to Cart" dialog box.
 

@@ -62,8 +62,8 @@ class ShopAuthenticationPlugin(LinkPluginBase):
     def get_render_template(self, context, instance, placeholder):
         form_type = instance.glossary.get('form_type')
         template_names = [
-            '{}/auth/{}.html'.format(app_settings.APP_LABEL, form_type),
-            'shop/auth/{}.html'.format(form_type),
+            f'{app_settings.APP_LABEL}/auth/{form_type}.html',
+            f'shop/auth/{form_type}.html',
             'shop/auth/form-not-found.html',
         ]
         return select_template(template_names)
@@ -82,10 +82,10 @@ class ShopAuthenticationPlugin(LinkPluginBase):
                 context['form_name'] = 'not_found_form'
             except IndexError:
                 form_name = form_type[0].replace('-', '_')
-                context['form_name'] = '{0}_form'.format(form_name)
+                context['form_name'] = f'{form_name}_form'
             except ImportError:
                 form_name = form_type[2]
-                context['form_name'] = '{0}_form'.format(form_name)
+                context['form_name'] = f'{form_name}_form'
             else:
                 context['form_name'] = FormClass.form_name
                 context[FormClass.form_name] = FormClass()

@@ -78,7 +78,7 @@ class MoneyField(models.DecimalField):
         super().__init__(*args, **defaults)
 
     def deconstruct(self):
-        name, path, args, kwargs = super(MoneyField, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         if kwargs['max_digits'] == 30:
             kwargs.pop('max_digits')
         if kwargs['decimal_places'] == CURRENCIES[self.currency_code][1]:
@@ -104,6 +104,16 @@ class MoneyField(models.DecimalField):
         if isinstance(value, float):
             value = str(value)
         return self.Money(value)
+
+    def get_db_prep_value(self, value, connection, prepared=False):
+        if not prepared:
+            value = self.get_prep_value(value)
+        # Database adapters register Decimal itself, not Money's subclasses.
+        if value is not None:
+            value = Decimal(value)
+        return connection.ops.adapt_decimalfield_value(
+            value, self.max_digits, self.decimal_places,
+        )
 
     def get_db_prep_save(self, value, connection):
         if isinstance(value, Decimal) and value.is_nan():

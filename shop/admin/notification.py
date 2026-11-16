@@ -56,7 +56,7 @@ class NotificationForm(models.ModelForm):
         """
         choices = [(n.name, str(n)) for n in Notify if n is not Notify.RECIPIENT]
         for user in get_user_model().objects.filter(is_staff=True):
-            email = '{0} <{1}>'.format(user.get_full_name(), user.email)
+            email = f'{user.get_full_name()} <{user.email}>'
             choices.append((user.id, email))
         return choices
 
@@ -78,17 +78,23 @@ class NotificationAdmin(admin.ModelAdmin):
     form = NotificationForm
     save_as = True
 
+    @admin.display(
+        description=_("Event")
+    )
     def transition_name(self, obj):
         return OrderModel.get_transition_name(obj.transition_target)
-    transition_name.short_description = _("Event")
 
+    @admin.display(
+        description=_("Attachments")
+    )
     def num_attachments(self, obj):
         return obj.notificationattachment_set.count()
-    num_attachments.short_description = _("Attachments")
 
+    @admin.display(
+        description=_("Mail Recipient")
+    )
     def get_recipient(self, obj):
         if obj.notify is Notify.RECIPIENT:
-            return '{0} <{1}>'.format(obj.recipient.get_full_name(), obj.recipient.email)
+            return f'{obj.recipient.get_full_name()} <{obj.recipient.email}>'
         else:
             return str(obj.notify)
-    get_recipient.short_description = _("Mail Recipient")

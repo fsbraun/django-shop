@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 from django.contrib import admin
 from django.db.models import Sum
 from django.forms import models, ValidationError
@@ -88,20 +88,24 @@ class OrderItemInlineDelivery(OrderItemInline):
             attrs['deliver_quantity'].widget.attrs.update(style='width: 50px;')
         else:
             attrs['deliver_quantity'].required = False
-        form = type(str('OrderItemForm'), (OrderItemForm,), attrs)
+        form = type('OrderItemForm', (OrderItemForm,), attrs)
         labels = {'canceled': _("Cancel this item")}
         kwargs.update(form=form, labels=labels)
         formset = super().get_formset(request, obj, **kwargs)
         return formset
 
+    @admin.display(
+        description=_("Delivered quantity")
+    )
     def get_delivered(self, obj=None):
         return OrderItemForm.get_delivered(obj)
-    get_delivered.short_description = _("Delivered quantity")
 
+    @admin.display(
+        description=_("Ready for delivery"),
+        boolean=True,
+    )
     def show_ready(self, obj=None):
         return not obj.canceled
-    show_ready.boolean = True
-    show_ready.short_description = _("Ready for delivery")
 
 
 def get_shipping_choices():
@@ -162,13 +166,18 @@ class DeliveryInline(admin.TabularInline):
             formset.form.base_fields['shipping_method'].required = False
         return formset
 
+    @admin.display(
+        description=_("Quantity/Items")
+    )
     def delivered_items(self, obj):
         aggr = obj.items.aggregate(quantity=Sum('quantity'))
         aggr['quantity'] = aggr['quantity'] or 0
         aggr.update(items=obj.items.count())
         return '{quantity}/{items}'.format(**aggr)
-    delivered_items.short_description = _("Quantity/Items")
 
+    @admin.display(
+        description=_("Print out")
+    )
     def print_out(self, obj):
         if obj.fulfilled_at is None:
             return ''
@@ -176,13 +185,14 @@ class DeliveryInline(admin.TabularInline):
         return format_html(
             '<span class="object-tools"><a href="{0}" class="viewsitelink" target="_new">{1}</a></span>',
             *link)
-    print_out.short_description = _("Print out")
 
+    @admin.display(
+        description=_("Fulfilled at")
+    )
     def fulfilled(self, obj):
         if obj.fulfilled_at:
             return timezone.localtime(obj.fulfilled_at).ctime()  # TODO: find the correct time format
         return _("Pending")
-    fulfilled.short_description = _("Fulfilled at")
 
 
 class DeliveryOrderAdminMixin:
@@ -191,7 +201,7 @@ class DeliveryOrderAdminMixin:
     """
     def get_urls(self):
         my_urls = [
-            url(r'^(?P<delivery_pk>\d+)/print_delivery_note/$',
+            path('<int:delivery_pk>/print_delivery_note/',
                 self.admin_site.admin_view(self.render_delivery_note),
                 name='print_delivery_note'),
         ]
@@ -200,7 +210,7 @@ class DeliveryOrderAdminMixin:
 
     def render_delivery_note(self, request, delivery_pk=None):
         template = select_template([
-            '{}/print/delivery-note.html'.format(app_settings.APP_LABEL.lower()),
+            f'{app_settings.APP_LABEL.lower()}/print/delivery-note.html',
             'shop/print/delivery-note.html'
         ])
         delivery = DeliveryModel.objects.get(pk=delivery_pk)

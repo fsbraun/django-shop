@@ -44,8 +44,8 @@ class BaseAddress(models.Model):
         Return the address as plain text to be used for printing, etc.
         """
         template_names = [
-            '{}/{}-address.txt'.format(app_settings.APP_LABEL, self.address_type),
-            '{}/address.txt'.format(app_settings.APP_LABEL),
+            f'{app_settings.APP_LABEL}/{self.address_type}-address.txt',
+            f'{app_settings.APP_LABEL}/address.txt',
             'shop/address.txt',
         ]
         template = select_template(template_names)

@@ -107,7 +107,7 @@ class BaseCartSerializer(serializers.ModelSerializer):
         return representation
 
     def represent_items(self, cart):
-        raise NotImplementedError("{} must implement method `represent_items()`.".format(self.__class__))
+        raise NotImplementedError(f"{self.__class__} must implement method `represent_items()`.")
 
 
 class CartSerializer(BaseCartSerializer):

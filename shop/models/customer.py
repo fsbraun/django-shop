@@ -67,7 +67,7 @@ class CustomerManager(models.Manager):
     so called unrecognized customers is a compact version of the session key.
     """
     BASE64_ALPHABET = string.digits + string.ascii_uppercase + string.ascii_lowercase + '.@'
-    REVERSE_ALPHABET = dict((c, i) for i, c in enumerate(BASE64_ALPHABET))
+    REVERSE_ALPHABET = {c: i for i, c in enumerate(BASE64_ALPHABET)}
     BASE36_ALPHABET = string.digits + string.ascii_lowercase
 
     _queryset_class = CustomerQuerySet

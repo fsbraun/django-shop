@@ -71,9 +71,19 @@ def test_purchase(api_rf, empty_cart, commodity_factory, notification_factory):
     message = email.email_message()
     assert isinstance(message, EmailMessage)
     assert product.product_name in message.body
-    assert "Subtotal: {}".format(order.subtotal) in message.body
-    assert "Total: {}".format(order.total) in message.body
+    assert f"Subtotal: {order.subtotal}" in message.body
+    assert f"Total: {order.total}" in message.body
     return order
+
+
+@pytest.mark.django_db
+def test_order_number_lookup(order):
+    queryset = OrderModel.objects.all()
+    number = order.get_number()
+    assert queryset.get(slug=number) == order
+    assert queryset.filter(slug__exact=number).get() == order
+    assert not queryset.exclude(slug=number).filter(pk=order.pk).exists()
+    assert queryset.filter(pk=order.pk).get() == order
 
 
 @pytest.mark.django_db
@@ -228,7 +238,10 @@ def test_fulfill_order_partially(admin_client, paid_order):
 def _extract_form_data(html_content):
     data = {}
     soup = BeautifulSoup(html_content, 'html.parser')
-    for input_field in soup.form.find_all(['input', 'textarea']):
+    # Django 4.2 renders the logout form before the model's change form.
+    form = soup.find('form', id='order_form')
+    assert form is not None
+    for input_field in form.find_all(['input', 'textarea']):
         name = input_field.attrs['name']
         if not name.startswith('_'):
             if input_field.attrs['type'] == 'checkbox':
@@ -236,7 +249,7 @@ def _extract_form_data(html_content):
             else:
                 value = input_field.attrs.get('value', '')
             data.update({name: value})
-    for select_field in soup.form.find_all('select'):
+    for select_field in form.find_all('select'):
         name = select_field.attrs['name']
         for option in select_field.find_all('option'):
             if 'selected' in option.attrs:
